@@ -2,29 +2,28 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\Pages\CreateCategory;
-use App\Filament\Resources\CategoryResource\Pages\EditCategory;
-use App\Filament\Resources\CategoryResource\Pages\ListCategories;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Models\Category;
+use App\Filament\Resources\PostResource\Pages;
+use App\Filament\Resources\PostResource\RelationManagers;
+use App\Models\Post;
 use Closure;
-use Faker\Provider\ar_EG\Text;
 use Filament\Forms;
+use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoryResource extends Resource
+class PostResource extends Resource
 {
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -33,14 +32,17 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-                    TextInput::make('name')
+                    Select::make('category_id')->relationship('category', 'name'),
+                    TextInput::make('title')
                         ->required()
                         ->autofocus()
                         ->reactive()
                         ->afterStateUpdated(function (Closure $set, $state){
                             $set('slug', Str::slug($state));
                         }),
-                    TextInput::make('slug')->required()->disabled()
+                    TextInput::make('slug')->required()->disabled(),
+                    RichEditor::make('content')->required(),
+                    Toggle::make('is_published')
                 ])
             ]);
     }
@@ -49,18 +51,18 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->sortable(),
-                TextColumn::make('name')->limit(20)->sortable(),
-                TextColumn::make('slug')->limit(20)
+                //
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
             ]);
     }
     
@@ -74,9 +76,9 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCategories::route('/'),
-            'create' => CreateCategory::route('/create'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            'index' => Pages\ListPosts::route('/'),
+            'create' => Pages\CreatePost::route('/create'),
+            'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
     }    
     
