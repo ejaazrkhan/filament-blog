@@ -21,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use App\Filament\Resources\CategoryResource\RelationManagers\PostsRelationManager;
 
 class CategoryResource extends Resource
 {
@@ -67,7 +68,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PostsRelationManager::class
         ];
     }
     
