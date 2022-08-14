@@ -37,11 +37,11 @@ class CategoryResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->autofocus()
-                        ->reactive()
-                        ->afterStateUpdated(function (Closure $set, $state){
-                            $set('slug', Str::slug($state));
-                        }),
-                    TextInput::make('slug')->required()->disabled()
+                        ->reactive(),
+                        // ->afterStateUpdated(function (Closure $set, $state){
+                        //     $set('slug', Str::slug($state));
+                        // }),
+                    // TextInput::make('slug')->required()->disabled()
                 ])
             ]);
     }
@@ -59,6 +59,7 @@ class CategoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -76,8 +77,8 @@ class CategoryResource extends Resource
     {
         return [
             'index' => ListCategories::route('/'),
-            'create' => CreateCategory::route('/create'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            // 'create' => CreateCategory::route('/create'),
+            // 'edit' => EditCategory::route('/{record}/edit'),
         ];
     }    
     

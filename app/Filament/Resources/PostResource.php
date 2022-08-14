@@ -42,11 +42,11 @@ class PostResource extends Resource
                     TextInput::make('title')
                         ->required()
                         ->autofocus()
-                        ->reactive()
-                        ->afterStateUpdated(function (Closure $set, $state){
-                            $set('slug', Str::slug($state));
-                        }),
-                    TextInput::make('slug')->required()->disabled(),
+                        ->reactive(),
+                        // ->afterStateUpdated(function (Closure $set, $state){
+                        //     $set('slug', Str::slug($state));
+                        // }),
+                    // TextInput::make('slug')->required()->disabled(),
                     SpatieMediaLibraryFileUpload::make('thumbnail')->collection('posts'),
                     RichEditor::make('content')->required(),
                     Toggle::make('is_published')
@@ -71,6 +71,7 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
